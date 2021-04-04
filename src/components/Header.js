@@ -1,10 +1,11 @@
 import React from "react"
 import styled from '@emotion/styled'
+import { Link } from 'react-router-dom'
 
 const Header = ({ pageTitle }) => {
   return (
     <StyledHeader>
-      <h1>AstrumU</h1>
+      <Link to="/">AstrumU</Link>
       <h2>{pageTitle}</h2>
       <Profile>
         <p>John Smith</p>
@@ -24,11 +25,16 @@ const StyledHeader = styled.header`
   background-color: #FFFFFF;
   box-shadow: 0px 0px 15px 5px rgba(156, 142, 142, 0.4);
   padding: 1rem;
-  h1 {
+  a {
     color: #FA9256;
     font-size: 2rem;
+    text-decoration: none;
+    :visited {
+      color: #FA9256;
+    }
+    font-weight: 700;
   }
-  h1, h2 {
+  a, h2 {
     margin: 0;
   }
 `
