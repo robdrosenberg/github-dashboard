@@ -7,27 +7,68 @@ import Issues from './Issues'
 import { IconContext } from "react-icons"
 import { RiFoldersLine, RiMailLine } from 'react-icons/ri'
 import { IoSpeedometerOutline } from 'react-icons/io5'
+import { useQuery, gql } from '@apollo/client'
+
 
 // TODO: Style Loadmore, Style languages, add fork
 // TODO: State for issues
 
-const RepoViewer = ({ data }) => {
+
+const REPOSITORY_DATA = gql`
+  query RepositoryData($totalRepos: Int) {
+    viewer {
+      login
+      name
+      avatarUrl
+      email
+      repositories(first: $totalRepos) {
+        totalCount
+        nodes {
+          isFork
+          name
+          description
+          id
+          languages(first: 3) {
+            nodes {
+              name
+            }
+          }
+          issues(first: 3) {
+            nodes {
+              title
+              url
+              bodyText
+            }
+          }
+        }
+      }
+    }
+  }
+`
+
+const RepoViewer = ({ }) => {
+  const [repoFetchCount, setRepoFetchCount] = useState(5)
+  const { loading, error, data } = useQuery(REPOSITORY_DATA, {
+    variables: {
+      totalRepos: repoFetchCount
+    }
+  })
+
   const [repoIssues, setRepoIssues] = useState([])
+  const [repoID, setRepoID] = useState("")
   const ownerName = get("viewer.name", data)
   const ownerLogin = get("viewer.login", data)
   const ownerEmail = get("viewer.email", data)
   const repositoryData = get("viewer.repositories", data)
 
-  // useEffect (() => {
-  //   set
-  // }, [])
 
-  const handleIssues = (issues) => {
-    console.log("Handled?")
+  const handleSelectedRepo = (issues, repoID) => {
     setRepoIssues(issues)
+    setRepoID(repoID)
   }
 
-  console.log("Issues", repoIssues)
+  if (loading) return <p>Loading...</p>
+  if (error) return <p>Error: {error}</p>
   return (
     <Layout pageTitle="Repositories">
       <RepoOverview>
@@ -50,16 +91,16 @@ const RepoViewer = ({ data }) => {
           <RepoContainer>
             {repositoryData.nodes.map((repository, index) => {
               const languages = get("languages.nodes", repository)
-              console.log(repository)
               const issues = get("issues.nodes", repository)
               return (
-                <Repo key={index} onClick={() => handleIssues(issues)}>
+                <Repo key={index} onClick={() => handleSelectedRepo(issues, repository.id)}>
                   <IconContext.Provider value={{ size: "3em" }}>
                     <div style={{ justifySelf: 'center' }}>
                       <RiFoldersLine />
                     </div>
                   </IconContext.Provider>
                   <RepoData>
+                    {repository.isFork && <Fork>FORK</Fork>}
                     <h3>{repository.name}</h3>
                     <p>{repository.description}</p>
                     <Languages>
@@ -74,9 +115,9 @@ const RepoViewer = ({ data }) => {
               )
             })}
           </RepoContainer>
-          <button>Load More</button>
+          <LoadMore onClick={() => setRepoFetchCount(repoFetchCount + 5)}>Load More</LoadMore>
         </div>
-        <Issues selectedIssues={repoIssues} />
+        <Issues selectedIssues={repoIssues} repoID={repoID} />
       </RepoOverview>
     </Layout>
   )
@@ -84,13 +125,15 @@ const RepoViewer = ({ data }) => {
 
 const RepoOverview = styled.div`
   display: grid;
-  grid-template-columns: .5fr 1fr;
+  grid-template-columns: .3fr 1fr;
   align-items: center;
   grid-column-gap: 50px;
+  overflow: hidden;
 `
 const RepoContainer = styled.div`
   padding: 1rem 5rem 1rem 0;
-  max-height: 80%;
+  height: 65vh;
+  overflow: hidden;
   overflow-y: scroll;
   div:not(:last-child) {
     margin-bottom: 1rem;
@@ -100,8 +143,10 @@ const RepoContainer = styled.div`
 const Repo = styled.div`
   height: 120px;
   border-radius: 15px;
+  padding: 1rem;
   display: grid;
-  grid-template-columns: .5fr 1fr;
+  grid-template-columns: .35fr 1fr;
+  grid-template-rows: .1fr 1fr;
   align-items: center;
   cursor: pointer;
   transition: 300ms ease-in;
@@ -109,6 +154,13 @@ const Repo = styled.div`
   :hover {
     box-shadow: none;
   }
+`
+
+const Fork = styled.p`
+  color: red;
+  font-weight: 700;
+  margin: 0.25rem 0;
+  text-align: right;
 `
 
 const RepoData = styled.div`
@@ -120,10 +172,27 @@ const RepoData = styled.div`
   }
 `
 
+const LoadMore = styled.button`
+  background-color: #5DA3F1;
+  border: none;
+  padding: 0.75rem 4rem;
+  color: #ffffff;
+  text-transform: uppercase;
+  border-radius: 5px;
+  margin: 1rem auto;
+  font-weight: 700;
+  font-size: 1rem;
+`
+
 const Languages = styled.ul`
   display: flex;
   list-style: none;
   padding: 0;
+  li {
+    background-color: #A9D6FF;
+    border-radius: 5px;
+    padding: .25rem;
+  }
   li:not(:last-child){
     margin-right: 1rem;
   }
