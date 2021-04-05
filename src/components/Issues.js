@@ -3,12 +3,17 @@ import styled from '@emotion/styled'
 import { IconContext } from "react-icons"
 import { VscIssues } from 'react-icons/vsc'
 import { Link } from 'react-router-dom'
+import get from "lodash/fp/get"
 
-const Issues = ({ selectedIssues, repoID }) => {
+const Issues = ({ selectedRepo }) => {
+
+  const repoIssues = get("issues.nodes", selectedRepo)
+  const repoID = get("id", selectedRepo)
+
   return (
     <div>
       <IssuesContainer>
-        {selectedIssues && selectedIssues.map((issue, index) => {
+        {repoIssues && repoIssues.map((issue, index) => {
           return (
             <StyledIssue key={index} href={issue.url} target="_blank" rel="noreferrer">
               <IconContext.Provider value={{ size: "3em" }}>
@@ -24,7 +29,7 @@ const Issues = ({ selectedIssues, repoID }) => {
           )
         })}
       </IssuesContainer>
-      { selectedIssues.length > 0 ? <CreateIssue to={"/new-issue/" + repoID} >Create Issue</CreateIssue> : <p>No issues to display, please select a repo with issues.</p>}
+      <CreateIssue to={"/new-issue/" + repoID} >Create Issue</CreateIssue>
     </div >
   )
 }

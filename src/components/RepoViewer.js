@@ -54,17 +54,14 @@ const RepoViewer = ({ }) => {
     }
   })
 
-  const [repoIssues, setRepoIssues] = useState([])
-  const [repoID, setRepoID] = useState("")
+  const [selectedRepo, setSelectedRepo] = useState()
   const ownerName = get("viewer.name", data)
   const ownerLogin = get("viewer.login", data)
   const ownerEmail = get("viewer.email", data)
   const repositoryData = get("viewer.repositories", data)
 
-
-  const handleSelectedRepo = (issues, repoID) => {
-    setRepoIssues(issues)
-    setRepoID(repoID)
+  const handleSelectedRepo = (repository) => {
+    setSelectedRepo(repository)
   }
 
   if (loading) return <p>Loading...</p>
@@ -91,9 +88,8 @@ const RepoViewer = ({ }) => {
           <RepoContainer>
             {repositoryData.nodes.map((repository, index) => {
               const languages = get("languages.nodes", repository)
-              const issues = get("issues.nodes", repository)
               return (
-                <Repo key={index} onClick={() => handleSelectedRepo(issues, repository.id)}>
+                <Repo key={index} onClick={() => handleSelectedRepo(repository)}>
                   <IconContext.Provider value={{ size: "3em" }}>
                     <div style={{ justifySelf: 'center' }}>
                       <RiFoldersLine />
@@ -117,7 +113,7 @@ const RepoViewer = ({ }) => {
           </RepoContainer>
           <LoadMore onClick={() => setRepoFetchCount(repoFetchCount + 5)}>Load More</LoadMore>
         </div>
-        <Issues selectedIssues={repoIssues} repoID={repoID} />
+        {selectedRepo && <Issues selectedRepo={selectedRepo} />}
       </RepoOverview>
     </Layout>
   )
