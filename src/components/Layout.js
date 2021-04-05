@@ -24,6 +24,7 @@ const Container = styled.div`
   grid-template-columns: 1fr;
   grid-template-rows: 80px 1fr 100px;
   height: 100vh;
+  background-color: #FAFBFC;
   grid-template-areas: 
     'header'
     'main'
@@ -44,8 +45,7 @@ const Container = styled.div`
 `
 
 const Main = styled.main`
-  background-color: #FAFBFC;
-  height: 70vh;
+  
 `
 
 export default Layout

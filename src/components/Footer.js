@@ -7,8 +7,8 @@ const Footer = ({ }) => {
       <p>Need help? <a href="mailto:support@astrumu.com">Contact Us</a></p>
       <h1>AstrumU</h1>
       <FooterLinks>
-        <a href="">Terms of Service</a>
-        <a href="">Privacy Policy</a>
+        <a href="https://i.imgflip.com/1n560d.jpg">Terms of Service</a>
+        <a href="https://cnet1.cbsistatic.com/img/FzmT3adMw_wV1E619gW697o90_A=/670x503/2018/05/25/61d9d859-fc4e-4ae6-93e1-014562b103f4/gdpr.jpg">Privacy Policy</a>
       </FooterLinks>
     </StyledFooter>
   )
