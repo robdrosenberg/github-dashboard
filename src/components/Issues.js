@@ -4,36 +4,34 @@ import { IconContext } from "react-icons"
 import { VscIssues } from 'react-icons/vsc'
 import { Link } from 'react-router-dom'
 
-const Issues = ({ selectedIssues }) => {
-  console.log("Selected ISsues", selectedIssues)
-  if (selectedIssues.length > 0) {
-
-    return (
-      <div>
-        {selectedIssues && selectedIssues.map((issue) => {
+const Issues = ({ selectedIssues, repoID }) => {
+  return (
+    <div>
+      <IssuesContainer>
+        {selectedIssues && selectedIssues.map((issue, index) => {
           return (
-            <StyledIssue href={issue.url} target="_blank" rel="noreferrer">
+            <StyledIssue key={index} href={issue.url} target="_blank" rel="noreferrer">
               <IconContext.Provider value={{ size: "3em" }}>
-                <div style={{ justifySelf: 'center' }}>
+                <div style={{ justifySelf: 'center', padding: '2rem' }}>
                   <VscIssues />
                 </div>
               </IconContext.Provider>
-              <div>
+              <IssueData>
                 <h3>{issue.title}</h3>
                 <p>{issue.bodyText}</p>
-              </div>
+              </IssueData>
             </StyledIssue>
           )
         })}
-        <Link to="/new-issue">Create Issue</Link>
-      </div>
-    )
-  } else {
-    return (
-      <p>No issues to display</p>
-    )
-  }
+      </IssuesContainer>
+      { selectedIssues.length > 0 ? <CreateIssue to={"/new-issue/" + repoID} >Create Issue</CreateIssue> : <p>No issues to display, please select a repo with issues.</p>}
+    </div >
+  )
 }
+
+const IssuesContainer = styled.div`
+  margin-bottom: 3rem;
+`
 
 const StyledIssue = styled.a`
   text-decoration: none;
@@ -41,26 +39,42 @@ const StyledIssue = styled.a`
   align-items: center;
   padding: 1rem;
   background-color: #FFFFFF;
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
+  height: 150px;
   border-radius: 10px;
   box-shadow: 3px 5px 10px 0px rgba(48, 44, 44, 0.5);
   transition: 300ms ease-in;
+  color: #000000;
+  width: 50%;
   :visited {
     color: #000000;
   }
   :hover {
     box-shadow: none;
   }
-  div {
-    max-width: 50vw;
-    margin-left: 25px;
+`
+
+const IssueData = styled.div`
+  margin-left: 2rem;
     p {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      max-width: 600px;
     }
-  }
+`
 
+const CreateIssue = styled(Link)`
+  background-color: #F15D5D;
+  border: none;
+  padding: 0.75rem 4rem;
+  color: #ffffff;
+  text-transform: uppercase;
+  border-radius: 5px;
+  margin: 2rem auto;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
 `
 
 export default Issues
