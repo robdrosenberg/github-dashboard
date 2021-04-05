@@ -8,15 +8,13 @@ import {
   Route
 } from "react-router-dom";
 
-function App({ data }) {
+function App() {
   return (
     <Router>
       <Switch>
-        <Route path="/new-issue">
-          <NewIssue />
+        <Route path="/new-issue/:repoID" component={NewIssue}>
         </Route>
-        <Route path="/">
-          <RepoViewer data={data} />
+        <Route path="/" component={RepoViewer}>
         </Route>
       </Switch>
     </Router>
